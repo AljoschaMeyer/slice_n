@@ -56,7 +56,7 @@ impl<T, const N: usize> SliceN<T, N> {
         unsafe { from_raw_parts_unchecked(ptr, self.len()) }
     }
 
-    pub fn as_mut(&mut self) -> &mut SliceN<MaybeUninit<T>, N> {
+    pub fn as_maybe_uninit_mut(&mut self) -> &mut SliceN<MaybeUninit<T>, N> {
         let ptr = self.as_mut_ptr().cast::<MaybeUninit<T>>();
         unsafe { from_raw_parts_unchecked_mut(ptr, self.len()) }
     }
