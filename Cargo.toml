@@ -1,0 +1,21 @@
+[package]
+name = "slice_n"
+description = "Slices containing at least some number of elements."
+repository = "https://github.com/AljoschaMeyer/slice_n"
+version = "0.0.1"
+authors = ["Aljoscha Meyer <mail@aljoscha-meyer.de>"]
+edition = "2018"
+license = "CC-PDDC"
+
+[features]
+default = []
+
+alloc = [ "maybe-std/alloc" ]
+std = [ "maybe-std/std" ]
+unstable = [ "maybe-std/unstable" ]
+
+[dependencies]
+maybe-std = "0.1.2"
+
+[package.metadata.docs.rs]
+all-features = true
