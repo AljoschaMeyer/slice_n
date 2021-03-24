@@ -2,7 +2,7 @@
 name = "slice_n"
 description = "Slices containing at least some number of elements."
 repository = "https://github.com/AljoschaMeyer/slice_n"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Aljoscha Meyer <mail@aljoscha-meyer.de>"]
 edition = "2018"
 license = "CC-PDDC"

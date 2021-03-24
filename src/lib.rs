@@ -42,13 +42,13 @@ impl<T, const N: usize> SliceN<T, N> {
 
     /// Converts a regular slice into a `SliceN` without checking that its length is sufficient.
     pub unsafe fn from_slice_unchecked(s: &[T]) -> &Self {
-        &*core::mem::transmute::<_, *const Self>(s)
+        &*(core::ptr::slice_from_raw_parts(s.as_ptr(), s.len() - N) as *const Self)
     }
 
     /// Converts a regular mutable slice into a `SliceN` without checking that its length is
     /// sufficient.
     pub unsafe fn from_slice_unchecked_mut(s: &mut[T]) -> &mut Self {
-        &mut *core::mem::transmute::<_, *mut Self>(s)
+        &mut *(core::ptr::slice_from_raw_parts_mut(s.as_mut_ptr(), s.len() - N) as *mut Self)
     }
 
     pub fn as_maybe_uninit(&self) -> &SliceN<MaybeUninit<T>, N> {
@@ -115,11 +115,6 @@ impl<T> SliceN<T, 1> {
     }
 }
 
-/// Converts a reference to T into a `Slice1` of length 1 (without copying).
-pub fn from_mut<T>(s: &mut T) -> &mut Slice1<T> {
-    unsafe { Slice1::from_slice_unchecked_mut(slice::from_mut(s)) }
-}
-
 /// Forms a `SliceN` from a pointer and a length, without checking the length.
 ///
 /// In addition to the length being too low, this is just as unsafe as
@@ -154,13 +149,13 @@ pub unsafe fn from_raw_parts_mut<'a, T, const N: usize>(data: *mut T, len: usize
 
 impl<T, const N: usize> AsRef<[T]> for SliceN<T, N> {
     fn as_ref(&self) -> &[T] {
-        unsafe { slice::from_raw_parts((self as *const SliceN<T, N>).cast(), N + self.slice.len()) }
+        unsafe { slice::from_raw_parts((self as *const SliceN<T, N>) as *const T, N + self.slice.len()) }
     }
 }
 
 impl<T, const N: usize> AsMut<[T]> for SliceN<T, N> {
     fn as_mut(&mut self) -> &mut [T] {
-        unsafe { slice::from_raw_parts_mut((self as *mut SliceN<T, N>).cast(), N + self.slice.len()) }
+        unsafe { slice::from_raw_parts_mut((self as *mut SliceN<T, N>) as *mut T, N + self.slice.len()) }
     }
 }
 
@@ -199,10 +194,6 @@ impl<T: Debug, const N: usize> Debug for SliceN<T, N> {
 impl<T, S, const N: usize, const M: usize> PartialEq<SliceN<S, M>> for SliceN<T, N> where T: PartialEq<S> {
     fn eq(&self, other: &SliceN<S, M>) -> bool {
         self.as_ref().eq(other.as_ref())
-    }
-
-    fn ne(&self, other: &SliceN<S, M>) -> bool {
-        self.as_ref().ne(other.as_ref())
     }
 }
 
